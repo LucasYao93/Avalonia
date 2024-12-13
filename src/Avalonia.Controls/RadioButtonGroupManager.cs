@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Avalonia.Collections.Pooled;
 using Avalonia.Controls.Primitives;
@@ -17,17 +18,25 @@ internal interface IRadioButton : ILogical
 
 internal class RadioButtonGroupManager
 {
-    private static readonly RadioButtonGroupManager s_default = new();
-    private static readonly ConditionalWeakTable<IRenderRoot, RadioButtonGroupManager> s_registeredVisualRoots = new();
+    //public static readonly RadioButtonGroupManager s_default = new();
+    public static readonly ConditionalWeakTable<IRenderRoot, RadioButtonGroupManager> s_registeredVisualRoots = new();
 
-    private readonly Dictionary<string, List<WeakReference<IRadioButton>>> _registeredGroups = new();
+    public readonly Dictionary<string, List<WeakReference<IRadioButton>>> _registeredGroups = new();
     private bool _ignoreCheckedChanges;
 
-    public static RadioButtonGroupManager GetOrCreateForRoot(IRenderRoot? root)
+    public static RadioButtonGroupManager GetOrCreateForRoot(IRenderRoot root)
     {
-        if (root == null)
-            return s_default;
-        return s_registeredVisualRoots.GetValue(root, key => new RadioButtonGroupManager());
+        //if (root == null)
+        //{
+        //    Debug.WriteLine($"GetOrCreateForRoot:s_default-{s_default.GetHashCode()}", "RadioButton");
+        //    Debug.WriteLine($"GetOrCreateForRoot:s_default._registeredGroups-{s_default._registeredGroups.GetHashCode()}", "RadioButton");
+        //    return s_default;
+        //}
+        var rbgm = s_registeredVisualRoots.GetValue(root, key => new RadioButtonGroupManager());
+
+        Debug.WriteLine($"GetOrCreateForRoot:rbgm-{rbgm.GetHashCode()}", "RadioButton");
+        Debug.WriteLine($"GetOrCreateForRoot:rbgm._registeredGroups-{rbgm._registeredGroups.GetHashCode()}", "RadioButton");
+        return rbgm;
     }
 
     public void Add(IRadioButton radioButton)
@@ -41,7 +50,27 @@ internal class RadioButtonGroupManager
                 _registeredGroups.Add(groupName, group);
             }
 
+            //PrintInlcudeRB("Add", groupName);
+            var instance = radioButton as RadioButton;
+            //Debug.WriteLine($"Add, Group [{group.GetHashCode()}]: {instance?.Content}-{instance?.IsChecked}-{instance?.GetHashCode()}", "RadioButton");
             group.Add(new WeakReference<IRadioButton>(radioButton));
+        }
+    }
+
+    private void PrintInlcudeRB(string category, string groupName)
+    {
+        if (!_registeredGroups.TryGetValue(groupName, out var group))
+        {
+            return;
+        }
+
+        foreach (var item in group)
+        {
+            if (item.TryGetTarget(out var rb))
+            {
+                var instance = rb as RadioButton;
+                //Debug.WriteLine($"{category} Inlcudes, Group [{group.GetHashCode()}]: {instance?.Content}-{instance?.IsChecked}-{instance?.GetHashCode()}", "RadioButton");
+            }
         }
     }
 
@@ -54,6 +83,8 @@ internal class RadioButtonGroupManager
             {
                 if (!group[i].TryGetTarget(out var button) || button == radioButton)
                 {
+                    var instance = button as RadioButton;
+                    DebugMessage($"RadioButtonGroupManager Group-{group.GetHashCode()} remove RB: {instance?.Content}-{instance?.IsChecked}-{instance?.GetHashCode()}");
                     group.RemoveAt(i);
                     continue;
                 }
@@ -64,6 +95,19 @@ internal class RadioButtonGroupManager
             if (group.Count == 0)
             {
                 _registeredGroups.Remove(oldGroupName);
+            }
+            else
+            {
+                //Debug.WriteLine($"Not remove all rb of the {oldGroupName}:{group.GetHashCode()}", typeof(RadioButton).Name);
+
+                foreach(var item in group)
+                {
+                    if(item.TryGetTarget(out var rb))
+                    {
+                        var instance = rb as RadioButton;
+                        //Debug.WriteLine($"Keep, Group [{group.GetHashCode()}]: {instance?.Content}-{instance?.IsChecked}-{instance?.GetHashCode()}", "RadioButton");
+                    }
+                }
             }
         }
     }
@@ -108,6 +152,8 @@ internal class RadioButtonGroupManager
                         parent.IsChecked = true;
                         parent = parent.LogicalParent as IRadioButton;
                     }
+
+                    //PrintInlcudeRB("CheckedChanged",groupName);
                 }
             }
             else
@@ -131,5 +177,11 @@ internal class RadioButtonGroupManager
         {
             _ignoreCheckedChanges = false;
         }
+    }
+
+    private void DebugMessage(string message)
+    {
+        var processId = Process.GetCurrentProcess().Id;
+        Debug.WriteLine(message, $"RadioButton PID:{processId}");
     }
 }

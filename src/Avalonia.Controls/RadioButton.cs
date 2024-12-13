@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Avalonia.Automation.Peers;
@@ -52,15 +53,21 @@ namespace Avalonia.Controls
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             _groupManager?.Remove(this, GroupName);
+            
+            DebugRadioButtonGroupManager($"{this.Content}-{this.GetHashCode()} OnAttachedToVisualTree removed", _groupManager);
+
             EnsureRadioGroupManager(e.Root);
+
+            DebugRadioButtonGroupManager($"{this.Content}-{this.GetHashCode()} OnAttachedToVisualTree added", _groupManager);
+
             base.OnAttachedToVisualTree(e);
         }
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
-            base.OnDetachedFromVisualTree(e);
-
+            base.OnDetachedFromVisualTree(e);            
             _groupManager?.Remove(this, GroupName);
+            DebugRadioButtonGroupManager($"{this.Content}-{this.GetHashCode()} OnDetachedFromVisualTree removed", _groupManager);
             _groupManager = null;
         }
 
@@ -94,6 +101,9 @@ namespace Avalonia.Controls
             {
                 EnsureRadioGroupManager();
             }
+
+            DebugRadioButtonGroupManager($"{this.Content}-{this.GetHashCode()} OnGroupNameChanged add", _groupManager);
+
         }
 
         private new void IsCheckedChanged(bool? value)
@@ -101,15 +111,80 @@ namespace Avalonia.Controls
             if (value.GetValueOrDefault())
             {
                 EnsureRadioGroupManager();
-                _groupManager.OnCheckedChanged(this);
+                
+                DebugRadioButtonGroupManager($"{this.Content}-{this.GetHashCode()} OnCheckedChanged before", _groupManager);
+                
+                _groupManager?.OnCheckedChanged(this);
+
+                DebugRadioButtonGroupManager($"{this.Content}-{this.GetHashCode()} OnCheckedChanged after", _groupManager);
             }
         }
-        
-        [MemberNotNull(nameof(_groupManager))]
+
         private void EnsureRadioGroupManager(IRenderRoot? root = null)
         {
-            _groupManager = RadioButtonGroupManager.GetOrCreateForRoot(root ?? this.GetVisualRoot());
+            if (root == null)
+            {
+                root = this.GetVisualRoot();
+            }
+
+            if (root == null)
+            {
+                return;
+            }
+
+            _groupManager = RadioButtonGroupManager.GetOrCreateForRoot(root);
             _groupManager.Add(this);
+        }
+
+        private void DebugRadioButtonGroupManager(string type, RadioButtonGroupManager? groupManager)
+        {
+            if (groupManager is null)
+            {
+                return;
+            }
+
+            var groupManagerName = "s_registeredVisualRoots";
+
+            //if (groupManager.GetHashCode() == RadioButtonGroupManager.s_default.GetHashCode())
+            //{
+            //    groupManagerName = "s_default";
+            //}
+
+            DebugMessage(new string('-', 100));
+
+            DebugMessage($"{type} {groupManagerName} RadioButtonGroupManager: {groupManager.GetHashCode()}");
+            DebugMessage($"{type} {groupManagerName} RadioButtonGroupManager _registeredGroups: {groupManager._registeredGroups.GetHashCode()}");
+
+            if (string.IsNullOrEmpty(GroupName))
+            {
+                DebugMessage($"{type} {groupManagerName} RadioButtonGroupManager: group name empty");
+                goto end;
+            }
+            
+            groupManager._registeredGroups.TryGetValue(GroupName, out var group);
+
+            if (group is null)
+            {
+                DebugMessage($"{type} {groupManagerName} RadioButtonGroupManager: group empty");
+                goto end;
+            }
+
+            foreach(var ite in group)
+            {
+                if (ite.TryGetTarget(out var rb))
+                {
+                    var instance = rb as RadioButton;
+                    DebugMessage($"{type} {groupManagerName} RadioButtonGroupManager: {instance?.Content}-{instance?.IsChecked}-{instance?.GetHashCode()}");
+                }
+            }
+            end:
+            DebugMessage(new string('-', 100));
+        }
+
+        private void DebugMessage(string message)
+        {
+            var processId = Process.GetCurrentProcess().Id;
+            Debug.WriteLine(message, $"RadioButton PID:{processId}");
         }
     }
 }

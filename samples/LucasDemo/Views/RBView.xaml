@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LucasDemo.ViewModels;assembly=LucasDemo"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="LucasDemo.Views.RBView"
+             x:DataType="vm:RBViewModel">
+  <StackPanel Spacing="20">
+    <!--<StackPanel Spacing="10">
+      <TextBlock Text="{Binding Text}" />
+      <Button Content="Click me" Command="{Binding ChangeTextCommand}" />
+    </StackPanel>-->
+    <StackPanel Spacing="10">
+      <RadioButton Content="Network"
+                   IsChecked="{Binding NetworkChecked}"
+                   GroupName="GP01"/>
+      <RadioButton Content="Serial"
+                   IsChecked="{Binding SerialChecked}"
+                   GroupName="GP01"/>
+    </StackPanel>
+  </StackPanel>
+
+</UserControl>

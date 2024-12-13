@@ -1,0 +1,20 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:LucasDemo.ViewModels;assembly=LucasDemo"
+        xmlns:view="using:LucasDemo.Views"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:local="using:LucasDemo"
+        x:Class="LucasDemo.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="MainWindow">
+  
+  <DockPanel>
+    <Button DockPanel.Dock="Top" 
+            Content="Switch VM" 
+            Command="{Binding SwitchCurrentVMCommand}"/>
+    <ContentControl Content="{Binding CurrentVM}" />
+  </DockPanel>
+  
+</Window>

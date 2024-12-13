@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -302,6 +302,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.RenderTests.WpfCompare", "tests\Avalonia.RenderTests.WpfCompare\Avalonia.RenderTests.WpfCompare.csproj", "{9AE1B827-21AC-4063-AB22-C8804B7F931E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia.Win32.Automation", "src\Windows\Avalonia.Win32.Automation\Avalonia.Win32.Automation.csproj", "{0097673D-DBCE-476E-82FE-E78A56E58AA2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LucasDemo", "samples\LucasDemo\LucasDemo.csproj", "{1E6DA7AB-D192-4B2D-8BDD-2C86CB3681FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -707,6 +709,10 @@ Global
 		{0097673D-DBCE-476E-82FE-E78A56E58AA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0097673D-DBCE-476E-82FE-E78A56E58AA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0097673D-DBCE-476E-82FE-E78A56E58AA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E6DA7AB-D192-4B2D-8BDD-2C86CB3681FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E6DA7AB-D192-4B2D-8BDD-2C86CB3681FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E6DA7AB-D192-4B2D-8BDD-2C86CB3681FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E6DA7AB-D192-4B2D-8BDD-2C86CB3681FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -795,6 +801,7 @@ Global
 		{DA5F1FF9-4259-4C54-B443-85CFA226EE6A} = {9CCA131B-DE95-4D44-8788-C3CAE28574CD}
 		{9AE1B827-21AC-4063-AB22-C8804B7F931E} = {C5A00AC3-B34C-4564-9BDD-2DA473EF4D8B}
 		{0097673D-DBCE-476E-82FE-E78A56E58AA2} = {B39A8919-9F95-48FE-AD7B-76E08B509888}
+		{1E6DA7AB-D192-4B2D-8BDD-2C86CB3681FF} = {9B9E3891-2366-4253-A952-D08BCEB71098}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {87366D66-1391-4D90-8999-95A620AD786A}
